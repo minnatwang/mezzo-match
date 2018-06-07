@@ -1,0 +1,14 @@
+<div class=page>
+    <h1>My App</h1>
+    <p>Enter your text: </p>
+    <form method="POST">
+        <label>
+            <input type="text" name="input">
+        </label>
+    </form>
+     {% if answer is not none: %} <!-- Jinja code is between the bracket and percent-->
+    <p><label name='answer'>Answer is: {{ answer }}</label></p>
+    {% endif %}
+</div>
+
+<!-- between the double brackets are variable names that the template gets when render_template is called with kwargs, we will see that in action later. (Tip: you can add app.jinja_env.line_statement_prefix = '#' and just use # ( or any other prefix) once before a statement instead of having to do bracket & % every damn time.) -->
