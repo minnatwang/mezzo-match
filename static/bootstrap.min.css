@@ -2099,7 +2099,9 @@ select.form-control:focus::-ms-value {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border: 1px solid transparent;
+  /* border: 1px solid transparent; */
+  border: 1px solid red;
+  background: red;
   padding: .375rem .75rem;
   font-size: 1rem;
   line-height: 1.5;
