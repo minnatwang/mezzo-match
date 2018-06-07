@@ -2,19 +2,19 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Appster - Free Bootstrap 4 App Template</title>
-        <meta name="description" content="Love appster." />
+        <title>Kickstart Investor Day Matching Algorithm</title>
+        <meta name="description" content="Made for Kickstart Seed Fund" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!--Bootstrap 4-->
         <link rel="stylesheet" href="/static/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+        <link rel="stylesheet" href="/static/animate.min.css">
         <!--icons-->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     </head>
     <body>
         <!--header-->
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary sticky-navigation">
+        <!-- <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary sticky-navigation">
             <a class="navbar-brand" href="#"><strong>APPSTER</strong></a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,27 +38,37 @@
                     </li>
                 </ul>
             </div>
-        </nav>
+        </nav> -->
 
         <!--main section-->
-        <section class="bg-texture hero pt-5">
+        <section class="bg-texture hero pt-5"> <!--hero-->
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6 text-white wow fadeIn">
+                    <div class="col-md-8 text-white wow fadeIn">
                         <div class="mt-5 pt-5 d-none d-md-block"></div>
-                        <h1>Appster</h1>
-                        <h2>A beautiful <span class="text-orange">screen capturing</span> app that you
-                            can trust on</h2>
+                        <h4>Kickstart CEO Summit</h4>
+                        <h1>Investor Day Matching Algorithm</h1>
+                        <br>
+                        <h2> <span class="text-red">CSV UPLOAD INSTRUCTIONS</span> </h2>
                         <p class="mt-4 lead">
-                            Appster is a free Bootstrap 4 app landing page designed by Wired Dots and released under
-                            the Creative Commons 4.0.
+                          Your spreadsheet should have the following columns:
+                          <ul>
+                            <li>Entity name (column named 'entity') - REQUIRED: names of the companies and funds/investors; one name per row; this column is what the final schedule will be made from, so if an entity is requested but not in this column, it won't have a schedule</li>
+                            <li>Stage (column named 'stage'): stage of the fund or next round the company will be raising; e.g. Seed, A, B (note that this is not actually used in the algorithm and you can leave it blank for all entities</li>
+                            <li>Type (column named 'type') - REQUIRED: if the entity is a company, type is 0; if investor/fund, type is 1</li>
+                            <li>Importance (column named 'importance') - REQUIRED: a number denoting how important it is that the entity gets the meetings it has requested; higher number means more important; typically a number between 1-5 or 1-10 (depending on the range you want)</li>
+                            <li>Meeting requests (column(s) named 'choice_#'): these columns hold the main meeting requests; should match with the number of possible meetings any one entity can have</li>
+                            <li>Backup meeting requests (column(s) named 'backup_#'): these columns hold backup meeting requests; you can do as many as you want</li>
+                          </ul>
+                          Example spreadsheet first row: entity | type | importance | choice_1 | choice_2 | choice_3 | backup_1
+                          <br>
                         </p>
                         <p class="mt-5">
                             <a href="#" class="mr-2"><img src="/static/google-play.png" class="store-img"/></a>
                             <a href="#"><img src="/static/apple_store.png" class="store-img"/> </a>
                         </p>
                     </div>
-                    <div class="col-md-6 pt-5 d-none d-md-block wow fadeInRight">
+                    <div class="col-md-4 pt-5 d-none d-md-block wow fadeInRight">
                         <img class="img-fluid mx-auto d-block" src="/static/shot-3.png"/>
                     </div>
                 </div>
@@ -126,7 +136,7 @@
         </section>
 
         <!--extra features-->
-        <section class="bg-dark text-white" id="extra-features">
+        <!-- <section class="bg-dark text-white" id="extra-features">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center wow fadeIn">
@@ -158,10 +168,10 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!--pricing-->
-        <section class="bg-alt" id="pricing">
+        <!-- <section class="bg-alt" id="pricing">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-sm-8 mx-auto text-center">
@@ -222,10 +232,10 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!--download-->
-        <section class="bg-orange" id="download">
+        <!-- <section class="bg-orange" id="download">
             <div class="container">
                 <div class="row d-md-flex text-center wow fadeIn">
                     <div class="col-md-6 offset-md-3 col-sm-10 offset-sm-1 col-xs-12">
@@ -241,10 +251,10 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!--team-->
-        <section class="bg-white" id="team">
+        <!-- <section class="bg-white" id="team">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-sm-8 mx-auto text-center">
@@ -284,7 +294,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!--contact-->
         <section class="bg-texture-collage p-0" id="contact">
@@ -292,15 +302,15 @@
                 <div class="row d-md-flex text-white text-center wow fadeIn">
                     <div class="col-md-4 p-5">
                         <p><em class="material-icons dp36">phone</em></p>
-                        <p class="lead">+49 5456 87595</p>
+                        <p class="lead">+1 801 413 3883</p>
                     </div>
                     <div class="col-md-4 p-5">
                         <p><em class="material-icons dp36">email</em></p>
-                        <p class="lead">appster.support@gmail.com</p>
+                        <p class="lead">minnatwang(at)gmail(dot)com</p>
                     </div>
                     <div class="col-md-4 p-5">
                         <p><em class="material-icons dp36">location_on</em></p>
-                        <p class="lead">Berlin, Germany</p>
+                        <p class="lead">SLC, UT </p>
                     </div>
                 </div>
             </div>
@@ -311,15 +321,15 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center wow fadeIn">
-                        <h2 class="hero-heading text-muted">Appster</h2>
+                        <h2 class="hero-heading text-muted">Mezzomatch</h2>
                         <p class="mt-4">
-                            <a href="https://twitter.com/" target="_blank"><em class="ion-social-twitter text-twitter-alt icon-sm mr-3"></em></a>
-                            <a href="https://facebook.com/" target="_blank"><em class="ion-social-github text-facebook-alt icon-sm mr-3"></em></a>
-                            <a href="https://www.linkedin.com/" target="_blank"><em class="ion-social-linkedin text-linkedin-alt icon-sm mr-3"></em></a>
+                            <a href="https://twitter.com/minnatwang" target="_blank"><em class="ion-social-twitter text-twitter-alt icon-sm mr-3"></em></a>
+                            <a href="https://github.com/minnatwang/mezzo-match" target="_blank"><em class="ion-social-github text-facebook-alt icon-sm mr-3"></em></a>
+                            <a href="https://www.linkedin.com/in/minnawang" target="_blank"><em class="ion-social-linkedin text-linkedin-alt icon-sm mr-3"></em></a>
                         </p>
                         <p class="pt-2 text-muted">
                             &copy; 2017 Appster Theme. A free Bootstrap 4 theme by
-                            <a href="https://wireddots.com">Wired Dots</a>. Developed by <a href="https://twitter.com/attacomsian">@attacomsian</a>
+                            <a href="https://wireddots.com">Wired Dots</a>.
                         </p>
                     </div>
                 </div>
@@ -331,6 +341,6 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js"></script>
-        <script src="js/scripts.js"></script>
+        <script src="/static/scripts.js"></script>
     </body>
 </html>
