@@ -14,8 +14,8 @@ def application():
     answer = None
     if request.method == "POST":
         raw_input = request.form["input"]
-        check_input_for_errors(raw_input)
-        answer = logic(raw_input)
+        # check_input_for_errors(raw_input)
+        answer = raw_input # logic(raw_input)
     return render_template('main.html', answer=answer)
 
 if __name__ == "__main__":
