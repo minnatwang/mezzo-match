@@ -16,7 +16,7 @@ def application():
         raw_input = request.form["input"]
         # check_input_for_errors(raw_input)
         answer = raw_input # logic(raw_input)
-    return render_template('main.html', answer=answer)
+    return render_template('index.html', answer=answer)
 
 if __name__ == "__main__":
     app.run()
