@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def application():
-    answer = logic("example input")
+    answer = "this is just a string!" # logic("example input")
     return answer
 
 if __name__ == "__main__":
