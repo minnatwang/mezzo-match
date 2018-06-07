@@ -372,6 +372,50 @@ template {
   font-weight: 300
 }
 
+/* code added for accordion */
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #7C7F81;
+    color: #fff;
+    cursor: pointer;
+    padding: 12px;
+    width: 80%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+    background-color: #4B4F53;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  padding: 0 12px;
+  /* background-color: #202529; */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  width: 80%;
+}
+
+.accordion:after {
+    content: '+'; /* Unicode character for "plus" sign (+) */
+    /* font-size: 13px; */
+    color: #fff;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "-"; /* Unicode character for "minus" sign (-) */
+    color: #fff;
+}
+
+/* end of accordion code */
+
 .display-1 {
   font-size: 6rem
 }
@@ -449,8 +493,9 @@ hr {
 }
 
 .img-fluid, .img-thumbnail {
-  max-width: 100%;
-  height: auto
+  max-width: 120%; /*edited by Minna*/
+  height: auto;
+  margin: auto;
 }
 
 .img-thumbnail {
@@ -7974,7 +8019,7 @@ section {
 }
 
 .text-red {
-  color: #23282d !important
+  color: #eb1202 !important
 }
 
 .icon-sm, .material-icons.dp24 {
