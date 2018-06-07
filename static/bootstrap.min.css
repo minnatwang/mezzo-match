@@ -495,7 +495,7 @@ hr {
 .img-fluid, .img-thumbnail {
   max-width: 120%; /*edited by Minna*/
   height: auto;
-  margin: auto;
+  margin-top: 250px;
 }
 
 .img-thumbnail {

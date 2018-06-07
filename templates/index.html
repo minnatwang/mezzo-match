@@ -56,46 +56,73 @@
             Your spreadsheet needs to have the following columns:
             <br>
           </p>
-            <button class="accordion">Entity name (column labeled 'entity')</button>
-            <div class="panel">
-              <p><br><ul><li>Names of the companies and funds/investors (one name per row)</li><li> This column is what the final schedule will be made from, so if an entity is requested but not in this column, it won't have a schedule </li></ul></p>
-            </div>
+          <button class="accordion">Entity name (column labeled 'entity')</button>
+          <div class="panel">
+            <p>
+              <<ul>
+                <li>Names of the companies and funds/investors (one name per row)</li>
+                <li> This column is what the final schedule will be made from, so if an entity is requested but not in this column, it won't have a schedule </li>
+                </ul>
+            </p>
+          </div>
 
-            <button class="accordion">Stage (column labeled 'stage')</button>
-            <div class="panel">
-              <p><br><ul><li>stage of the fund or next round the company will be raising; e.g. Seed, A, B </li><li>Note that this is not actually used in the algorithm and you can leave it blank for all entities</li></ul></p>
-            </div>
+          <button class="accordion">Stage (column labeled 'stage')</button>
+          <div class="panel">
+            <p>
+              <ul>
+                <li>stage of the fund or next round the company will be raising; e.g. Seed, A, B </li>
+                <li>Note that this is not actually used in the algorithm and you can leave it blank for all entities</li>
+              </ul>
+            </p>
+          </div>
 
-            <button class="accordion">Type (column labeled 'type')</button>
-            <div class="panel">
-              <p><br><ul><li>If the entity is a company, type is 0; if investor/fund, type is 1</li></ul></p>
-            </div>
+          <button class="accordion">Type (column labeled 'type')</button>
+          <div class="panel">
+            <p>
+              <ul>
+                <li>If the entity is a company, type is 0; if investor/fund, type is 1</li>
+              </ul>
+            </p>
+          </div>
 
-            <button class="accordion">Importance (column labeled 'importance')</button>
-            <div class="panel">
-              <p><br><ul><li>A number denoting how important it is that the entity gets the meetings it has requested, where higher number means more important</li><li>Typically a number between 1-5 or 1-10 (depending on the range
-                you want)</li></ul></p>
-            </div>
+          <button class="accordion">Importance (column labeled 'importance')</button>
+          <div class="panel">
+            <p>
+              <ul>
+                <li>A number denoting how important it is that the entity gets the meetings it has requested, where higher number means more important</li>
+                <li>Typically a number between 1-5 or 1-10 (depending on the range you want)</li>
+              </ul>
+            </p>
+          </div>
 
-            <button class="accordion">Meeting requests (column labeled 'choice_#')</button>
-            <div class="panel">
-              <p><br><ul><li>These columns hold the main meeting requests</li><li> The number of choice_# columns should match the total number of possible meetings any one entity can have (e.g. the number of slots in everyone's schedules) </li></ul></p>
-            </div>
+          <button class="accordion">Meeting requests (column labeled 'choice_#')</button>
+          <div class="panel">
+            <p>
+              <ul>
+                <li>These columns hold the main meeting requests</li>
+                <li> The number of choice_# columns should match the total number of possible meetings any one entity can have (e.g. the number of slots in everyone's schedules) </li>
+              </ul>
+            </p>
+          </div>
 
-            <button class="accordion">Backup meeting requests (column labeled 'backup_#')</button>
-            <div class="panel">
-              <p><br><ul><li>These columns hold backup meeting requests</li> <li> You can offer as many or as few backups as you want to attendees </li> </ul></p>
-            </div>
-            <br>
-            <strong>One example of a correct spreadsheet's first row:</strong><br> entity | type | importance | choice_1 | choice_2 | choice_3 | backup_1
-            <br>
+          <button class="accordion">Backup meeting requests (column labeled 'backup_#')</button>
+          <div class="panel">
+            <p>
+              <ul>
+                <li>These columns hold backup meeting requests</li>
+                <li> You can offer as many or as few backups as you want to attendees </li>
+              </ul>
+            </p>
+          </div>
+          <br>
+          <strong>One example of a correct spreadsheet's first row:</strong><br> entity | type | importance | choice_1 | choice_2 | choice_3 | backup_1
+          <br>
           </p>
           <p class="mt-5">
             <!-- <a href="#" class="mr-2"><img src="/static/google-play.png" class="store-img"/></a>
             <a href="#"><img src="/static/apple_store.png" class="store-img"/> </a> -->
-            <label class="btn btn-default">
-    Upload .csv <input type="file" hidden>
-</label>
+            <label class="btn btn-default"> Upload .csv <input type="file" hidden>
+            </label>
           </p>
         </div>
         <div class="col-md-4 pt-5 d-none d-md-block wow fadeInRight">
