@@ -25,78 +25,35 @@
           <div class="mt-5 pt-5 d-none d-md-block"></div>
           <h4>Kickstart CEO Summit</h4>
           <h1>Investor Day Matching Algorithm</h1>
-          <h2> <span class="text-red">CSV UPLOAD INSTRUCTIONS</span> </h2>
+          <h2> <span class="text-red">NEXT STEP: Scheduling unavailability</span> </h2>
           <p class="mt-4 lead">
-            Your spreadsheet needs to have the following columns: THIS IS A TEST
-            <br>
-          </p>
-          <button class="accordion">Entity name (column labeled 'entity')</button>
-          <div class="panel">
-            <p>
-                <ul>
-                <li>Names of the companies and funds/investors (one name per row)</li>
-                <li> This column is what the final schedule will be made from, so if an entity is requested but not in this column, it won't have a schedule </li>
-                </ul>
-            </p>
-          </div>
-
-          <button class="accordion">Stage (column labeled 'stage')</button>
-          <div class="panel">
-            <p>
-              <ul>
-                <li>stage of the fund or next round the company will be raising; e.g. Seed, A, B </li>
-                <li>Note that this is not actually used in the algorithm and you can leave it blank for all entities</li>
-              </ul>
-            </p>
-          </div>
-
-          <button class="accordion">Type (column labeled 'type')</button>
-          <div class="panel">
-            <p>
-              <ul>
-                <li>If the entity is a company, type is 0; if investor/fund, type is 1</li>
-              </ul>
-            </p>
-          </div>
-
-          <button class="accordion">Importance (column labeled 'importance')</button>
-          <div class="panel">
-            <p>
-              <ul>
-                <li>A number denoting how important it is that the entity gets the meetings it has requested, where higher number means more important</li>
-                <li>Typically a number between 1-5 or 1-10 (depending on the range you want)</li>
-              </ul>
-            </p>
-          </div>
-
-          <button class="accordion">Meeting requests (column labeled 'choice_#')</button>
-          <div class="panel">
-            <p>
-              <ul>
-                <li>These columns hold the main meeting requests</li>
-                <li> The number of choice_# columns should match the total number of possible meetings any one entity can have (e.g. the number of slots in everyone's schedules) </li>
-              </ul>
-            </p>
-          </div>
-
-          <button class="accordion">Backup meeting requests (column labeled 'backup_#')</button>
-          <div class="panel">
-            <p>
-              <ul>
-                <li>These columns hold backup meeting requests</li>
-                <li> You can offer as many or as few backups as you want to attendees </li>
-              </ul>
-            </p>
-          </div>
-          <br>
-          <strong>One example of a correct spreadsheet's first row:</strong><br> entity | type | importance | choice_1 | choice_2 | choice_3 | backup_1
-          <br>
+            There are probably people who have told you that they won't be able to make certain meetings. Let's block out times when those attendees are unavailable!
           </p>
           <p class="mt-5">
           {% if msg is not none: %} <!-- Jinja code is between the bracket and percent-->
-         <p><label name='msg'>{{ msg }}</label></p>
-         {% endif %}
+          <label name='msg' class="text-red"><strong>{{ msg }}</strong></label>
+          {% endif %}
           </p>
+          <form action="{{ url_for('schedule_unavailability') }}" method="POST" enctype="multipart/form-data">
+<p>
+            <strong> What entities (company/investor) are unavailable? </strong> <br>(One entity per line; must be spelled and formatted identical to an entry in the 'entity' column of your csv) <br>Type 'DONE' if everyone is available for all slots.<br><br>
+            <textarea type="text" class="form-control" name="entities" rows="3">
+Sample Company
+Sample Investor
+            </textarea>
+          </p>
+            <p>
+            <strong>Which meetings can't those entities make?</strong> <br>Format should be meeting numbers separated by commas, such as '#' or '#,#'<br> Each line should correlate with the company line in the text box above (so in this instance, Sample Company can't make meeting 1 and Sample Investor can't make meetings 1 and 2)
+            <br><br>
+            <textarea type="text" class="form-control" name="conflicts_strs" rows="3">
+1
+1,2
+            </textarea>
+          </p>
+            <input class="btn btn-default" type="submit" value="Submit" />
+
+
+          </form>
         </div>
         <div class="col-md-4 pt-5 d-none d-md-block wow fadeInRight">
           <img class="img-fluid mx-auto d-block" src="/static/shot-3.png" />

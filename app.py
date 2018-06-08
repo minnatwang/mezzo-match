@@ -112,13 +112,13 @@ def create_schedule(df, num_meetings):
     return df_schedule
 
 
-def schedule_over_unavailability(df_schedule):
-    print('Let\'s block out times when attendees are unavailable!')
+def schedule_over_unavailability(df_schedule, entity, conflicts_str):
+    # print('Let\'s block out times when attendees are unavailable!')
     more = True
     while more:
-        entity = input("What entity (company or investor) has unavailability? "
-                       "(Must be spelled and formatted identical to an entry in the \'entity\' column uploaded .csv) \n "
-                       "Type \'DONE\' if you're done.\n")
+        # entity = input("What entity (company or investor) has unavailability? "
+        #                "(Must be spelled and formatted identical to an entry in the \'entity\' column uploaded .csv) \n "
+        #                "Type \'DONE\' if you're done.\n")
 
         if entity == 'DONE':
             # more = False
@@ -131,9 +131,9 @@ def schedule_over_unavailability(df_schedule):
             print('That entity name doesn\'t match with anything in your spreadsheet. Please check the name and remember that spaces matter!')
             continue
 
-        conflicts_str = input(f"Which meetings can't {entity} make? "
-                              f"(format should be \'#\' or \'#,#\'; "
-                              f"e.g. if they can't make meetings 1 and 3, enter \'1,3\'\n")
+        # conflicts_str = input(f"Which meetings can't {entity} make? "
+        #                       f"(format should be \'#\' or \'#,#\'; "
+        #                       f"e.g. if they can't make meetings 1 and 3, enter \'1,3\'\n")
         conflicts = map(int, conflicts_str.split(','))
 
         try:
@@ -256,20 +256,21 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df):
 
 def check_column_names(df):
     if not ('entity' in df.columns):
-        print('There is no column labeled \'entity\'. Please fix your spreadsheet and try again. Exiting now.')
-        sys.exit()
+        msg = 'There is no column labeled \'entity\'. Please fix your spreadsheet and try again.'
+        raise ValueError(msg)
+        # sys.exit()
 
     if not ('type' in df.columns):
-        print('There is no column labeled \'type\'. Please fix your spreadsheet and try again. Exiting now.')
-        sys.exit()
+        msg = 'There is no column labeled \'type\'. Please fix your spreadsheet and try again.'
+        raise ValueError(msg)
 
     if not ('importance' in df.columns):
-        print('There is no column labeled \'importance\'. Please fix your spreadsheet and try again. Exiting now.')
-        sys.exit()
+        msg = 'There is no column labeled \'importance\'. Please fix your spreadsheet and try again.'
+        raise ValueError(msg)
 
     if sum([1 for col in df.columns if 'choice' in col]) == 0:
-        print('There are no meeting request columns (should be in the format \'choice_#\'). Please fix your spreadsheet and try again. Exiting now.')
-        sys.exit()
+        msg = 'There are no meeting request columns (should be in the format \'choice_#\'). Please fix your spreadsheet and try again.'
+        raise ValueError(msg)
 
 
 @app.route("/")
@@ -280,8 +281,10 @@ def index():
 @app.route("/upload", methods=['POST'])
 def upload():
     msg = None
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
     if request.method == "POST":
-        os.mkdir(app.config['UPLOAD_FOLDER'])
         file = request.files['file']
         filename = file.filename
         print(filename)
@@ -291,31 +294,25 @@ def upload():
         print(filepath)
 
         try:
-            msg = 'Completed: '
-            df = pd.read_csv(filename)
+            print('STATUS: Reading file')
+            df = pd.read_csv(filepath)
 
             print('STATUS: Checking column names\n')
             check_column_names(df)
-            msg = msg + 'checking column names'
 
             print('STATUS: Taking in data\n')
             df_request_pairs, df_requests, num_meetings = get_requests_from_data(df)
             df_requests_combined_sorted = clean_up_requests(df_request_pairs)
-            msg = msg + ', reading data'
 
             print('STATUS: Setting up schedule\n')
             df_schedule = create_schedule(df, num_meetings)
-            msg = msg + ', creating empty schedule'
-            msg = msg + '\nNow let\'s block out any unavailability!'
-            df_schedule = schedule_over_unavailability(df_schedule)
 
+        except Exception as err:
+            msg = 'Something went wrong. ' + '\nError: ' + str(err) + '\n\n Please check your spreadsheet and try again or contact Minna.'
+
+        else:
             df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
             df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
-
-        except:
-            msg = 'Something went wrong. Please check your spreadsheet and try again or contact Minna.'
-
-
 
     return render_template("schedule_unavailability.html", msg=msg)
 
@@ -324,9 +321,12 @@ def upload():
 def schedule_unavailability():
     df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
+    if request.method == "POST":
+        # take in the form data, break it apart line by line. do a loop that feeds the below function
+        df_schedule = schedule_over_unavailability(df_schedule)
 
-    print('STATUS: Scheduling (with tie breaks)\n')
-    df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df)
+        print('STATUS: Scheduling (with tie breaks)\n')
+        df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df)
 
     df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
