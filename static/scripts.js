@@ -45,14 +45,16 @@ $(function() {
 
   for (i = 0; i < acc.length; i++) {
     acc[i].addEventListener("click", function() {
-      for (i = 0; i < acc.length; i++) {
-        acc[i].classList.toggle("active", false);
-        acc[i].nextElementSibling.style.maxHeight = null;
+      for (j = 0; j < acc.length; j++) {
+        if (j != i) {
+          acc[j].classList.toggle("active", false);
+          acc[j].nextElementSibling.style.maxHeight = null;
+        }
       }
 
       this.classList.toggle("active");
-      var panel = this.nextElementSibling;
 
+      var panel = this.nextElementSibling;
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {

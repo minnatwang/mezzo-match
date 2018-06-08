@@ -9,6 +9,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 def get_requests_from_data(df):
     df = df.replace(np.nan, '', regex=True)
 
@@ -137,8 +138,8 @@ def schedule_over_unavailability(df_schedule):
 
         try:
             for conflict in conflicts:
-                index = df_schedule.columns.get_loc('mtg' + str(conflict))
-                df_schedule.iloc[entity_row, index] = "N/A"
+                index2 = df_schedule.columns.get_loc('mtg' + str(conflict))
+                df_schedule.iloc[entity_row, index2] = "N/A"
         except ValueError:
             print(f'Whoops! I can\'t process {conflicts}, might\'ve been invalid formatting. Let\'s try that again.')
             continue
@@ -164,8 +165,8 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df):
 
     for name, group in grouped_by_score:
         # pull out all matches (any non matches are moved up to the top of the list)
-        duplicates1 = group.duplicated(subset='entity1',keep=False).tolist()
-        duplicates2 = group.duplicated(subset='entity2',keep=False).tolist()
+        duplicates1 = group.duplicated(subset='entity1', keep=False).tolist()
+        duplicates2 = group.duplicated(subset='entity2', keep=False).tolist()
         duplicates_boolean = [a or b for a, b in zip(duplicates1, duplicates2)]
         singles_boolean = [not i for i in duplicates_boolean]
 
@@ -185,15 +186,15 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df):
                 duplicates_inds.remove(ind)
 
         # do a check to get rid of singles within duplicates_inds (caused by deleting those with no free columns)
-        duplicates1_2 = group.loc[duplicates_inds,:].duplicated(subset='entity1', keep=False).tolist()
-        duplicates2_2 = group.loc[duplicates_inds,:].duplicated(subset='entity2', keep=False).tolist()
+        duplicates1_2 = group.loc[duplicates_inds, :].duplicated(subset='entity1', keep=False).tolist()
+        duplicates2_2 = group.loc[duplicates_inds, :].duplicated(subset='entity2', keep=False).tolist()
         duplicates_boolean_2 = [a or b for a, b in zip(duplicates1_2, duplicates2_2)]
-        duplicates_inds = [i for (i, v) in zip(group.index.values.tolist(), duplicates_boolean) if v]
+        duplicates_inds = [i for (i, v) in zip(group.index.values.tolist(), duplicates_boolean_2) if v]
 
         # ask for new order
         if len(duplicates_inds) > 0:
             print('-----------------------------------------------')
-            print(group.loc[duplicates_inds,['entity2','entity1']])
+            print(group.loc[duplicates_inds, ['entity2', 'entity1']])
             var = input(
                 "I need your help breaking ties! Reorder the above meeting pairs with most important mtgs first using the row index (the first number in each row). (format: \'1,2,3\' or \'1\' or \'1,3\') Or type \'SAME\' if it's already in the order you want. \n")
 
@@ -204,7 +205,7 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df):
                     new_order_dupl = duplicates_inds
                 else:
                     # Change order in the original df
-                    new_order_dupl = [int(s) for s in var.split(',')] # .strip('[]')
+                    new_order_dupl = [int(s) for s in var.split(',')]  # .strip('[]')
             except ValueError:
                 print(f'Oops, looks like there are some formatting errors in what you typed ({var}). I\'m going to exit so we can start over.')
                 sys.exit()
@@ -278,9 +279,9 @@ def index():
 
 @app.route("/upload", methods=['POST'])
 def upload():
-    filename = None
+    msg = None
     if request.method == "POST":
-
+        os.mkdir(app.config['UPLOAD_FOLDER'])
         file = request.files['file']
         filename = file.filename
         print(filename)
@@ -289,36 +290,38 @@ def upload():
         file.save(filepath)
         print(filepath)
 
-        df = pd.read_csv(filename)
+        try:
+            msg = 'Completed: '
+            df = pd.read_csv(filename)
 
-        print('STATUS: Checking column names\n')
-        check_column_names(df)
-        print('STATUS: Taking in data\n')
-        df_request_pairs, df_requests, num_meetings = get_requests_from_data(df)
-        df_requests_combined_sorted = clean_up_requests(df_request_pairs)
+            print('STATUS: Checking column names\n')
+            check_column_names(df)
+            msg = msg + 'checking column names'
 
-        print('STATUS: Setting up schedule\n')
-        df_schedule = create_schedule(df, num_meetings)
+            print('STATUS: Taking in data\n')
+            df_request_pairs, df_requests, num_meetings = get_requests_from_data(df)
+            df_requests_combined_sorted = clean_up_requests(df_request_pairs)
+            msg = msg + ', reading data'
 
-        df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
-        df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
+            print('STATUS: Setting up schedule\n')
+            df_schedule = create_schedule(df, num_meetings)
+            msg = msg + ', creating empty schedule'
+            msg = msg + '\nNow let\'s block out any unavailability!'
+            df_schedule = schedule_over_unavailability(df_schedule)
 
-    return render_template("uploaded.html", filename=filename)
+            df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
+            df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
 
-
-@app.route("/uploaded", methods=['POST'])
-def uploaded():
-    df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
-
-    df_schedule = schedule_over_unavailability(df_schedule)
-
-    df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
-
-    return render_template("unavailability_scheduled.html")
+        except:
+            msg = 'Something went wrong. Please check your spreadsheet and try again or contact Minna.'
 
 
-@app.route("/unavailability_scheduled", methods=['POST'])
-def unavailability_scheduled():
+
+    return render_template("schedule_unavailability.html", msg=msg)
+
+
+@app.route("/schedule_unavailability", methods=['POST'])
+def schedule_unavailability():
     df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
 
@@ -328,11 +331,11 @@ def unavailability_scheduled():
     df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
 
-    return render_template("tie_breaks.html")
+    return render_template("break_ties.html")
 
 
-@app.route("/tie_breaks", methods=['POST'])
-def tie_breaks():
+@app.route("/break_ties", methods=['POST'])
+def break_ties():
     df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
 
@@ -345,11 +348,12 @@ def tie_breaks():
 
     print('NEXT STEP: ADD ANY MORE DESIRED MEETINGS MANUALLY AND SEND OUT FINAL SCHEDULES USING MAIL MERGE')
 
-    return render_template("final_schedule.html") #todo should have download links
+    return render_template("download_schedule.html")  # todo should have download links
 
 
 def complete():
     os.remove(app.config['UPLOAD_FOLDER'])
+
 
 if __name__ == "__main__":
     app.run(debug=True)
