@@ -121,8 +121,10 @@
           <p class="mt-5">
             <!-- <a href="#" class="mr-2"><img src="/static/google-play.png" class="store-img"/></a>
             <a href="#"><img src="/static/apple_store.png" class="store-img"/> </a> -->
-            <label class="btn btn-default"> Upload .csv <input type="file" hidden>
-            </label>
+            <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+              <label class="btn btn-default"> Upload .csv <input type="file" name="file" accept=".csv" onchange="this.form.submit()" hidden />
+              </label>
+            </form>
           </p>
         </div>
         <div class="col-md-4 pt-5 d-none d-md-block wow fadeInRight">
@@ -385,7 +387,7 @@
             <a href="https://www.linkedin.com/in/minnawang" target="_blank"><em class="ion-social-linkedin text-linkedin-alt icon-sm mr-3"></em></a>
           </p>
           <p class="pt-2 text-muted">
-            &copy; 2017 Appster Theme. A free Bootstrap 4 theme by
+            &copy; 2017 Appster Theme from
             <a href="https://wireddots.com">Wired Dots</a>.
           </p>
         </div>

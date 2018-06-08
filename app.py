@@ -1,22 +1,28 @@
-from flask import Flask
-from flask import render_template
-from flask import request
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route("/", methods=['GET', 'POST'])
-def application():
-    # DEMO CODE
-    # answer = "this is just a string!" # logic("example input")
-    # return answer
+@app.route("/")
+def index():
+    return render_template("upload.html")
 
-    # NEW CODE
-    answer = None
+@app.route("/upload", methods=['POST'])
+def upload():
+    filename = None
     if request.method == "POST":
-        raw_input = request.form["input"]
-        # check_input_for_errors(raw_input)
-        answer = raw_input # logic(raw_input)
-    return render_template('index.html', answer=answer)
+
+        file = request.files['file']
+        filename = file.filename
+        print(filename)
+        print(file)
+        destination = "/".join(["target: ", filename])
+        print(destination)
+        # file.save(destination)
+
+    return render_template("complete.html", filename=filename)
+
+def run_matching(filename):
+    print(filename)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
