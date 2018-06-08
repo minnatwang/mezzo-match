@@ -10,25 +10,25 @@ $(function() {
   new WOW().init();
 
   //scroll menu
-  $(window).scroll(function() {
-    var secondFeature = $('#features').offset().top;
-    var scroll = $(window).scrollTop();
-    if (scroll >= 300) {
-      $('.sticky-navigation').css({
-        "top": '0px'
-      });
-    } else {
-      $('.sticky-navigation').css({
-        "top": '-100px'
-      });
-    }
-    if (scroll >= secondFeature - 200) {
-      $(".mobileScreen").css({
-        'background-position': 'center top'
-      });
-    }
-    return false;
-  });
+  // $(window).scroll(function() {
+  //   var secondFeature = $('#features').offset().top;
+  //   var scroll = $(window).scrollTop();
+  //   if (scroll >= 300) {
+  //     $('.sticky-navigation').css({
+  //       "top": '0px'
+  //     });
+  //   } else {
+  //     $('.sticky-navigation').css({
+  //       "top": '-100px'
+  //     });
+  //   }
+  //   if (scroll >= secondFeature - 200) {
+  //     $(".mobileScreen").css({
+  //       'background-position': 'center top'
+  //     });
+  //   }
+  //   return false;
+  // });
 
   //page scroll
   $('a.page-scroll').bind('click', function(event) {
@@ -39,14 +39,20 @@ $(function() {
     event.preventDefault();
   });
 
-  //accordion - Added by minna
+  // accordion - Added by Minna
   var acc = document.getElementsByClassName("accordion");
   var i;
 
   for (i = 0; i < acc.length; i++) {
     acc[i].addEventListener("click", function() {
+      for (i = 0; i < acc.length; i++) {
+        acc[i].classList.toggle("active", false);
+        acc[i].nextElementSibling.style.maxHeight = null;
+      }
+
       this.classList.toggle("active");
       var panel = this.nextElementSibling;
+
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {
@@ -54,4 +60,12 @@ $(function() {
       }
     });
   }
+
+
+  function setClass(els, className, fnName) {
+    for (var i = 0; i < els.length; i++) {
+      els[i].classList[fnName](className);
+    }
+  }
+
 });
