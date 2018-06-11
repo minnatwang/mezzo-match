@@ -161,7 +161,7 @@ def schedule_over_unavailability(df_schedule, entity, conflicts_str):
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df):
     # includes tie-breaking
     grouped_by_score = df_requests_combined_sorted.groupby('score', sort=False)
-    print('If you feel like you\'re doing a lot of tie breaking, you might want to go back into your .csv and use a wider range of values for importance.')
+    # print('If you feel like you\'re doing a lot of tie breaking, you might want to go back into your .csv and use a wider range of values for importance.')
 
     for name, group in grouped_by_score:
         # pull out all matches (any non matches are moved up to the top of the list)
@@ -319,40 +319,57 @@ def upload():
 
 @app.route("/schedule_unavailability", methods=['POST'])
 def schedule_unavailability():
+    msg = None
+
     df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
-    if request.method == "POST":
-        # take in the form data, break it apart line by line. do a loop that feeds the below function
-        df_schedule = schedule_over_unavailability(df_schedule)
 
-        print('STATUS: Scheduling (with tie breaks)\n')
-        df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df)
+    if request.method == "POST":
+        entity_list = request.form["entities"].split("\n")
+        conflict_strs_list = request.form["conflict_strs"].split("\n")
+        print(entity_list)
+
+        try:
+            for entity, conflict_str in zip(entity_list, conflict_strs_list):
+                df_schedule = schedule_over_unavailability(df_schedule, entity, conflict_str)
+
+            print('STATUS: Scheduling (with tie breaks)\n')
+            df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df)
+
+        except Exception as err:
+            msg = 'Something went wrong. ' + '\nError: ' + str(
+                err) + '\n\n Please check your spreadsheet and try again or contact Minna.'
 
     df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
     df_requests_combined_sorted.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
 
-    return render_template("break_ties.html")
+    return render_template("break_ties.html", msg=msg)
 
 
 @app.route("/break_ties", methods=['POST'])
 def break_ties():
-    df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
-    df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
+    schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule')
+    requests_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted')
 
-    print('HERE IS THE FINAL SCHEDULE:\n')
-    print(df_schedule)
-    print(df_requests_combined_sorted)
+    # df_schedule = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule'))
+    # df_requests_combined_sorted = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted'))
+    # print('HERE IS THE FINAL SCHEDULE:\n')
+    # print(df_schedule)
+    # print(df_requests_combined_sorted)
+    # df_schedule.to_csv('/Users/minna/Desktop/schedule.csv')
+    # df_requests_combined_sorted.to_csv('/Users/minna/Desktop/requests.csv')
 
-    df_schedule.to_csv('/Users/minna/Desktop/schedule.csv')
-    df_requests_combined_sorted.to_csv('/Users/minna/Desktop/requests.csv')
+    # print('NEXT STEP: ADD ANY MORE DESIRED MEETINGS MANUALLY AND SEND OUT FINAL SCHEDULES USING MAIL MERGE')
 
-    print('NEXT STEP: ADD ANY MORE DESIRED MEETINGS MANUALLY AND SEND OUT FINAL SCHEDULES USING MAIL MERGE')
-
-    return render_template("download_schedule.html")  # todo should have download links
+    return render_template("download_schedule.html", schedule_link=schedule_link, requests_link=requests_link)
 
 
-def complete():
+@app.route("/download_schedule.html", methods=['POST'])
+def download_schedule():
+    # delete the folder
     os.remove(app.config['UPLOAD_FOLDER'])
+
+    return render_template("completed.html")
 
 
 if __name__ == "__main__":
