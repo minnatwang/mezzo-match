@@ -254,7 +254,7 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
 def offer_reorder(df_schedule, df_requests_combined_sorted, df):
     global tie_break
     # includes tie-breaking
-    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=False)
+    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
     groups = [name for name, dfs in grouped_by_score]
 
     global max_tie_break
@@ -319,7 +319,7 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
     global tie_break
     # includes tie-breaking
-    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=False)
+    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
     groups = [name for name, dfs in grouped_by_score]
 
     group = grouped_by_score.get_group(groups[tie_break - 1])
