@@ -7937,12 +7937,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: #512da8;
+  color: #eb1202;
   transition: all .35s
 }
 
 a:focus, a:hover {
-  color: #512da8;
+  color: #eb1202;
   outline: 0;
   text-decoration: none
 }

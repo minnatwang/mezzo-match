@@ -33,13 +33,18 @@ All the hard stuff is done, so now you get to look at your schedule! You can add
           <label name='msg' class="text-red"><strong>{{ msg }}</strong></label>
           {% endif %}
           </p>
-          <p> Right click and choose "Save file as" to save to your computer.</p
+          <p> Right click and choose "Save link as..." to save to your computer.</p
             <ul>
               <li> <a href={{schedule_link}}> Schedule</a> - this is the completed schedule
               </li>
               <li> <a href={{requests_link}}> Summary of requests </a> - this is a full list of all the meeting requests and which ones made it into the final schedule
               </li>
             </ul>
+            <p class="mt-4 lead"> Now press the button below to delete all of your files off the server. You'll want to do this because this app is hosted publicly on Github (so your files are public if you leave them). </p>
+            <form action="{{ url_for('download_schedule') }}" method="POST" enctype="multipart/form-data">
+              <input class="btn btn-default" type="submit" value="Complete the matching!" />
+
+            </form>
         </div>
         <div class="col-md-4 pt-5 d-none d-md-block wow fadeInRight">
           <img class="img-fluid mx-auto d-block" src="/static/shot-3.png" />

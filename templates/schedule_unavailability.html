@@ -34,8 +34,15 @@
           <label name='msg' class="text-red"><strong>{{ msg }}</strong></label>
           {% endif %}
           </p>
+          <p>Here is a link to the blank schedule in .csv form. Right click on it and choose "Save link as..." to save it to your computer. </p>
+          <ul> <li> <a href={{schedule_link}}> Schedule</a></li> </ul>
+          <p> After downloading the file, open it. There will be a column labeled "entity" (the name of the company or investor), columns labled "mtg#" where # is an integer, and columns labeled "mtg#_req". </p>
+          <p> <strong>Go through and find the rows for people who are unavailable. In the column for the meeting that they'll miss, type in "UNAVAILABLE". </strong>Don't touch the "mtg#_req" columns--you won't need those for this step. Do this until all the unavailabilities have been filled.</p>
+          <p> Now, upload your edited CSV! (Note: Don't change the name of the file!)</p>
           <form action="{{ url_for('schedule_unavailability') }}" method="POST" enctype="multipart/form-data">
-<p>
+            <label class="btn btn-default"> Upload .csv <input type="file" name="file" accept=".csv" onchange="this.form.submit()" hidden />
+            </label>
+<!-- <p>
             <strong> What entities (company/investor) are unavailable? </strong> <br>(One entity per line; must be spelled and formatted identical to an entry in the 'entity' column of your csv) <br>Type 'DONE' if everyone is available for all slots.<br><br>
             <textarea type="text" class="form-control" name="entities" rows="3">
 Sample Company
@@ -50,7 +57,7 @@ Sample Investor
 1,2
             </textarea>
           </p>
-            <input class="btn btn-default" type="submit" value="Submit" />
+            <input class="btn btn-default" type="submit" value="Submit" /> -->
 
 
           </form>
