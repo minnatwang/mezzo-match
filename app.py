@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, current_app, send_from_directory
+from flask import Flask, render_template, request, current_app, send_from_directory, session
 import os
 import numpy as np
 import pandas as pd
 import sys
 
 app = Flask(__name__)
+app.secret_key = 'secretsecrekeykey'
 
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -250,7 +251,7 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
     return df_schedule, df_requests_combined_sorted
 
 
-def offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break=0):
+def offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break):
     global max_tie_break
     # includes tie-breaking
 
@@ -481,6 +482,7 @@ def schedule_unavailability():
     msg = None
     filepath = None
     ties_to_break_indices = None
+    tie_break = 0
 
     if request.method == "POST":
 
@@ -513,29 +515,29 @@ def schedule_unavailability():
         os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
     # print(df_schedule)
 
-    try:
-        print('STATUS: Scheduling (with tie breaks)\n')
-        ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df)
-        print('max_tie_break = ' + str(max_tie_break))
+    # try:
+    print('STATUS: Scheduling (with tie breaks)\n')
+    ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
+    print('max_tie_break = ' + str(max_tie_break))
+    print('tie_break = ' + str(tie_break))
+
+    while ties_to_break is None:
+        df_schedule, df_requests_combined_sorted = fill_schedule(
+            df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break, tie_break)
+        ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
         print('tie_break = ' + str(tie_break))
+        print(df_schedule)
 
-        while ties_to_break is None:
-            df_schedule, df_requests_combined_sorted = fill_schedule(
-                df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break, tie_break)
-            ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
-            print('tie_break = ' + str(tie_break))
-            print(df_schedule)
+        if tie_break == max_tie_break:
+            schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv'
+            requests_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv'
 
-            if tie_break == max_tie_break:
-                schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv'
-                requests_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv'
-
-                return render_template("download_schedule.html",
-                                       schedule_link=schedule_link, requests_link=requests_link)
-    except ValueError as err:
-        msg = 'Something went wrong. ' + \
-              '\nError: ' + str(err) + \
-              '\n\n Please check your submission and try again or contact Minna.'
+            return render_template("download_schedule.html",
+                                   schedule_link=schedule_link, requests_link=requests_link)
+    # except ValueError as err:
+    #     msg = 'Something went wrong. ' + \
+    #           '\nError: ' + str(err) + \
+    #           '\n\n Please check your submission and try again or contact Minna.'
 
     df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv')
     df_requests_combined_sorted.to_csv(os.path.join(
@@ -555,7 +557,7 @@ def schedule_unavailability():
 
 @app.route("/break_ties", methods=['POST'])
 def break_ties():
-    tie_break = session.get('tie_break', None)
+    tie_break = session.get('tie_break')
     ties_to_break = None
     msg = None
     ties_to_break_indices = None
@@ -575,8 +577,8 @@ def break_ties():
 
         try:
             df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted,
-                                                                     df_requests, df, broken_tie_indices)
-            ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
+                                                                     df_requests, df, broken_tie_indices, tie_break)
+            ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
             print('tie_break = ' + str(tie_break))
             print(df_schedule)
         except ValueError as err:
@@ -587,8 +589,8 @@ def break_ties():
         try:
             while ties_to_break is None:
                 df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted,
-                                                                         df_requests, df, ties_to_break)
-                ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
+                                                                         df_requests, df, ties_to_break, tie_break)
+                ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
                 print('tie_break = ' + str(tie_break))
 
                 if tie_break == max_tie_break:
