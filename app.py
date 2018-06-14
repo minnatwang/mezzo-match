@@ -620,11 +620,11 @@ def break_ties():
 @app.route("/download_schedule", methods=['POST'])
 def download_schedule():
     # delete the folder
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv')
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv')
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests') + '.csv')
-    os.remove(original_filename)
+    # os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv')
+    # os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
+    # os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv')
+    # os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests') + '.csv')
+    # os.remove(original_filename)
 
     return render_template("completed.html")
 
