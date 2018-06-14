@@ -344,8 +344,7 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
             print(new_order_dupl)
 
     except ValueError:
-        msg = f'Oops, looks like there are some formatting errors in what you typed ({var}). ' \
-              f'I\'m going to exit so we can start over.'
+        msg = f'Oops, looks like there are some formatting errors in what you typed ({var}). '
         raise ValueError(msg)
 
     # Note that any request pairs where one/two parties have no availability or no common availability are deleted
@@ -461,8 +460,8 @@ def upload():
 
         except Exception as err:
             msg = 'Something went wrong. ' + \
-                  '\nError: ' + str(err) + \
-                  '\n\n Please check your spreadsheet and try again or contact Minna.'
+                  '\nError: ' + str(err)
+                  # '\n\n Please check your spreadsheet and try again or contact Minna.'
 
         else:
             df.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
