@@ -362,7 +362,7 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
             entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
         except IndexError as err:
             msg = f'Oops, looks like one or more of the numbers in {var} might be wrong. '
-            raise ValueError(err + msg)
+            raise ValueError(str(err) + msg)
 
         entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
         entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
