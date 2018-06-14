@@ -289,8 +289,9 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break):
             duplicates_inds.remove(ind)
             # print(str(ind) + '\'s schedule is full and will be deleted')
         # delete any companies that can't possibly match
-        elif len(set(entity1_open_cols).intersection(entity2_open_cols)) == 0:
-            duplicates_inds.remove(ind)
+        if len(set(entity1_open_cols).intersection(entity2_open_cols)) == 0:
+            if ind in duplicates_inds:
+                duplicates_inds.remove(ind)
             # print(str(ind) + ' has no common availability and will be deleted')
 
     # do a check to get rid of singles within duplicates_inds (caused by deleting those with no free columns)
