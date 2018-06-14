@@ -278,24 +278,24 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
         entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
         entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
         entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
-        print(df_schedule.iloc[entity1_row])
-        print(entity1_open_cols)
-        print(df_schedule.iloc[entity2_row])
-        print(entity2_open_cols)
+        # print(df_schedule.iloc[entity1_row])
+        # print(entity1_open_cols)
+        # print(df_schedule.iloc[entity2_row])
+        # print(entity2_open_cols)
 
         if len(entity1_open_cols) == 0 or len(entity2_open_cols) == 0:
             duplicates_inds.remove(ind)
-            print(str(ind) + '\'s schedule is full and will be deleted')
+            # print(str(ind) + '\'s schedule is full and will be deleted')
         # delete any companies that can't possibly match
         elif len(set(entity1_open_cols).intersection(entity2_open_cols)) == 0:
             duplicates_inds.remove(ind)
-            print(str(ind) + ' has no common availability and will be deleted')
+            # print(str(ind) + ' has no common availability and will be deleted')
 
     # do a check to get rid of singles within duplicates_inds (caused by deleting those with no free columns)
     duplicates1_2 = group.loc[duplicates_inds, :].duplicated(subset='entity1', keep=False).tolist()
     duplicates2_2 = group.loc[duplicates_inds, :].duplicated(subset='entity2', keep=False).tolist()
-    print(duplicates1_2)
-    print(duplicates2_2)
+    # print(duplicates1_2)
+    # print(duplicates2_2)
     duplicates_boolean_2 = [a or b for a, b in zip(duplicates1_2, duplicates2_2)]
     duplicates_inds_2 = [i for (i, v) in zip(
         group.loc[duplicates_inds, :].index.values.tolist(), duplicates_boolean_2) if v]
@@ -337,6 +337,7 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
         else:
             # Change order in the original df
             new_order_dupl = [int(s) for s in var.split(',')]  # .strip('[]')
+            print(new_order_dupl)
 
     except ValueError:
         msg = f'Oops, looks like there are some formatting errors in what you typed ({var}). ' \
@@ -346,8 +347,8 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
     # Note that any request pairs where one/two parties have no availability or no common availability are deleted
     # This is b/c reindexing deletes any indices not mentioned
     new_order = singles_inds + new_order_dupl
-    print('The new order is:')
-    print(new_order)
+    # print('The new order is:')
+    # print(new_order)
     group = group.reindex(new_order)
     print('The new group is:')
     print(group)
@@ -362,7 +363,7 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
             entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
         except IndexError as err:
             msg = f'Oops, looks like one or more of the numbers in {var} might be wrong. '
-            raise ValueError(str(err) + msg)
+            raise ValueError(str(err) + '\n' + msg)
 
         entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
         entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
@@ -432,10 +433,10 @@ def upload():
 
     if request.method == "POST":
         file = request.files['file']
-        print(file.filename)
+        # print(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
-        print(filepath)
+        # print(filepath)
         original_filename = filepath
 
         try:
@@ -507,20 +508,20 @@ def schedule_unavailability():
         os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests') + '.csv')
     df = pd.read_csv(
         os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
-    print(df_schedule)
+    # print(df_schedule)
 
     try:
         print('STATUS: Scheduling (with tie breaks)\n')
         ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
         print('max_tie_break = ' + str(max_tie_break))
         print('tie_break = ' + str(tie_break))
-        print(df_schedule)
 
         while ties_to_break is None:
             df_schedule, df_requests_combined_sorted = fill_schedule(
                 df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break)
             ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
             print('tie_break = ' + str(tie_break))
+            print(df_schedule)
 
             if tie_break == max_tie_break:
                 schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv'
@@ -567,8 +568,6 @@ def break_ties():
 
     if request.method == "POST":
         broken_tie_indices = request.form["order"]
-        print(broken_tie_indices)
-        print(df_schedule)
 
         try:
             df_schedule, df_requests_combined_sorted = fill_schedule(df_schedule, df_requests_combined_sorted,
