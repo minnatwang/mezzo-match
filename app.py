@@ -349,6 +349,8 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
     new_order = singles_inds + new_order_dupl
     # print('The new order is:')
     # print(new_order)
+    print('The old group is:')
+    print(group)
     group = group.reindex(new_order)
     print('The new group is:')
     print(group)
