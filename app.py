@@ -13,6 +13,7 @@ tie_break = 0
 max_tie_break = 100
 original_filename = ''
 groups = []
+grouped_by_score = []
 
 
 def get_requests_from_data(df):
@@ -257,6 +258,7 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
     global groups
     global tie_break
     global max_tie_break
+    global grouped_by_score
     # includes tie-breaking
 
     if tie_break == 0:
