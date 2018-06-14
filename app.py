@@ -9,7 +9,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-tie_break = 0
 max_tie_break = 100
 original_filename = ''
 
@@ -251,8 +250,7 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
     return df_schedule, df_requests_combined_sorted
 
 
-def offer_reorder(df_schedule, df_requests_combined_sorted, df):
-    global tie_break
+def offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break=0):
     global max_tie_break
     # includes tie-breaking
 
@@ -312,15 +310,14 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
         # todo for the future, could also output how many slots each company has or order by company/investor name
         print(str(group.loc[duplicates_inds_2, ['entity2', 'entity1']]))
         return str(group.loc[duplicates_inds_2, ['entity2', 'entity1']]), \
-               str(group.loc[duplicates_inds_2].index.values.tolist()).replace(']', '').replace('[', '')
+               str(group.loc[duplicates_inds_2].index.values.tolist()).replace(']', '').replace('[', ''), tie_break
 
     else:
-        return None, None
+        return None, None, tie_break
         # new_order_dupl = duplicates_inds
 
 
-def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
-    global tie_break
+def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var, tie_break):
     # includes tie-breaking
     grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
     groups = [name for name, dfs in grouped_by_score]
@@ -480,7 +477,6 @@ def upload():
 
 @app.route("/schedule_unavailability", methods=['POST'])
 def schedule_unavailability():
-    global tie_break
     ties_to_break = None
     msg = None
     filepath = None
@@ -519,14 +515,14 @@ def schedule_unavailability():
 
     try:
         print('STATUS: Scheduling (with tie breaks)\n')
-        ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
+        ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df)
         print('max_tie_break = ' + str(max_tie_break))
         print('tie_break = ' + str(tie_break))
 
         while ties_to_break is None:
             df_schedule, df_requests_combined_sorted = fill_schedule(
-                df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break)
-            ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df)
+                df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break, tie_break)
+            ties_to_break, ties_to_break_indices = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
             print('tie_break = ' + str(tie_break))
             print(df_schedule)
 
@@ -552,13 +548,14 @@ def schedule_unavailability():
         return render_template("download_schedule.html", schedule_link=schedule_link, requests_link=requests_link)
     else:
         progress = str(tie_break) + ' out of ' + str(max_tie_break)
+        session['tie_break'] = tie_break
         return render_template("break_ties.html", msg=msg, ties_to_break=ties_to_break, progress=progress,
                                ties_to_break_indices=ties_to_break_indices)
 
 
 @app.route("/break_ties", methods=['POST'])
 def break_ties():
-    global tie_break
+    tie_break = session.get('tie_break', None)
     ties_to_break = None
     msg = None
     ties_to_break_indices = None
@@ -617,6 +614,7 @@ def break_ties():
         return render_template("download_schedule.html", schedule_link=schedule_link, requests_link=requests_link)
     else:
         progress = str(tie_break) + ' out of ' + str(max_tie_break)
+        session['tie_break'] = tie_break
         return render_template("break_ties.html", msg=msg, ties_to_break=ties_to_break, progress=progress,
                                ties_to_break_indices=ties_to_break_indices)
 
