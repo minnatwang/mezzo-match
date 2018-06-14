@@ -12,8 +12,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 tie_break = 0
 max_tie_break = 100
 original_filename = ''
-# groups = []
-# grouped_by_score = []
 
 
 def get_requests_from_data(df):
@@ -255,21 +253,17 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
 
 def offer_reorder(df_schedule, df_requests_combined_sorted, df):
     global tie_break
-    global groups
-    global tie_break
     global max_tie_break
-    global grouped_by_score
     # includes tie-breaking
 
-    if tie_break == 0:
-        grouped_by_score = df_requests_combined_sorted.groupby('score', sort=False)
-        groups = [name for name, dfs in grouped_by_score]
-        max_tie_break = len(groups)
+    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
+    groups = [name for name, dfs in grouped_by_score]
+    max_tie_break = len(groups)
 
     print('groups:')
     print(groups)
 
-    group = grouped_by_score.get_group(groups[tie_break])
+    group = grouped_by_score.get_group(groups[-(tie_break+1)])
 
     # pull out all matches (any non matches are moved up to the top of the list)
     duplicates1 = group.duplicated(subset='entity1', keep=False).tolist()
@@ -327,15 +321,13 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
 
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
     global tie_break
-    global groups
-    global grouped_by_score
     # includes tie-breaking
-    # grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
-    # groups = [name for name, dfs in grouped_by_score]
+    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
+    groups = [name for name, dfs in grouped_by_score]
     print('fill_schedule groups:')
     print(groups)
 
-    group = grouped_by_score.get_group(groups[tie_break - 1])
+    group = grouped_by_score.get_group(groups[-tie_break])
 
     duplicates1 = group.duplicated(subset='entity1', keep=False).tolist()
     duplicates2 = group.duplicated(subset='entity2', keep=False).tolist()
