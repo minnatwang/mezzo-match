@@ -327,6 +327,7 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
 
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
     global tie_break
+    global groups
     global grouped_by_score
     # includes tie-breaking
     # grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
