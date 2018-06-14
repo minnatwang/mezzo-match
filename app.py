@@ -280,19 +280,19 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break):
         entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
         entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
         entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
-        # print(df_schedule.iloc[entity1_row])
-        # print(entity1_open_cols)
-        # print(df_schedule.iloc[entity2_row])
-        # print(entity2_open_cols)
+        print(df_schedule.iloc[entity1_row])
+        print(entity1_open_cols)
+        print(df_schedule.iloc[entity2_row])
+        print(entity2_open_cols)
 
         if len(entity1_open_cols) == 0 or len(entity2_open_cols) == 0:
             duplicates_inds.remove(ind)
-            # print(str(ind) + '\'s schedule is full and will be deleted')
+            print(str(ind) + '\'s schedule is full and will be deleted')
         # delete any companies that can't possibly match
         if len(set(entity1_open_cols).intersection(entity2_open_cols)) == 0:
             if ind in duplicates_inds:
                 duplicates_inds.remove(ind)
-            # print(str(ind) + ' has no common availability and will be deleted')
+            print(str(ind) + ' has no common availability and will be deleted')
 
     # do a check to get rid of singles within duplicates_inds (caused by deleting those with no free columns)
     duplicates1_2 = group.loc[duplicates_inds, :].duplicated(subset='entity1', keep=False).tolist()
