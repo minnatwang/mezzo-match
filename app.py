@@ -515,29 +515,29 @@ def schedule_unavailability():
         os.path.join(app.config['UPLOAD_FOLDER'], 'df') + '.csv')
     # print(df_schedule)
 
-    # try:
-    print('STATUS: Scheduling (with tie breaks)\n')
-    ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
-    print('max_tie_break = ' + str(max_tie_break))
-    print('tie_break = ' + str(tie_break))
-
-    while ties_to_break is None:
-        df_schedule, df_requests_combined_sorted = fill_schedule(
-            df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break, tie_break)
+    try:
+        print('STATUS: Scheduling (with tie breaks)\n')
         ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
+        print('max_tie_break = ' + str(max_tie_break))
         print('tie_break = ' + str(tie_break))
-        print(df_schedule)
 
-        if tie_break == max_tie_break:
-            schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv'
-            requests_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv'
+        while ties_to_break is None:
+            df_schedule, df_requests_combined_sorted = fill_schedule(
+                df_schedule, df_requests_combined_sorted, df_requests, df, ties_to_break, tie_break)
+            ties_to_break, ties_to_break_indices, tie_break = offer_reorder(df_schedule, df_requests_combined_sorted, df, tie_break)
+            print('tie_break = ' + str(tie_break))
+            print(df_schedule)
 
-            return render_template("download_schedule.html",
-                                   schedule_link=schedule_link, requests_link=requests_link)
-    # except ValueError as err:
-    #     msg = 'Something went wrong. ' + \
-    #           '\nError: ' + str(err) + \
-    #           '\n\n Please check your submission and try again or contact Minna.'
+            if tie_break == max_tie_break:
+                schedule_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv'
+                requests_link = os.path.join(app.config['UPLOAD_FOLDER'], 'df_requests_combined_sorted') + '.csv'
+
+                return render_template("download_schedule.html",
+                                       schedule_link=schedule_link, requests_link=requests_link)
+    except ValueError as err:
+        msg = 'Something went wrong. ' + \
+              '\nError: ' + str(err) + \
+              '\n\n Please check your submission and try again or contact Minna.'
 
     df_schedule.to_csv(os.path.join(app.config['UPLOAD_FOLDER'], 'df_schedule') + '.csv')
     df_requests_combined_sorted.to_csv(os.path.join(
