@@ -221,8 +221,7 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
                 entity1_row = df_schedule.index[df['entity'] == entity1].tolist()[0]
                 entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
             except IndexError:
-                print(f'Oops, looks like one or more of the numbers in {var} might be wrong. '
-                      f'I\'m going to exit so we can start over.')
+                print(f'Oops, looks like one or more of the numbers in {var} might be wrong.')
                 sys.exit()
             entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
             entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
@@ -361,10 +360,9 @@ def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var
         try:
             entity1_row = df_schedule.index[df['entity'] == entity1].tolist()[0]
             entity2_row = df_schedule.index[df['entity'] == entity2].tolist()[0]
-        except IndexError:
-            msg = f'Oops, looks like one or more of the numbers in {var} might be wrong. ' \
-                  f'I\'m going to exit so we can start over.'
-            raise ValueError(msg)
+        except IndexError as err:
+            msg = f'Oops, looks like one or more of the numbers in {var} might be wrong. '
+            raise ValueError(err + msg)
 
         entity1_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity1_row] == '') if x]
         entity2_open_cols = [i for i, x in enumerate(df_schedule.iloc[entity2_row] == '') if x]
