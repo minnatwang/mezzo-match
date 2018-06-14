@@ -12,6 +12,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 tie_break = 0
 max_tie_break = 100
 original_filename = ''
+groups = []
 
 
 def get_requests_from_data(df):
@@ -253,14 +254,18 @@ def fill_schedule_old(df_schedule, df_requests_combined_sorted, df_requests, df)
 
 def offer_reorder(df_schedule, df_requests_combined_sorted, df):
     global tie_break
-    # includes tie-breaking
-    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
-    groups = [name for name, dfs in grouped_by_score]
-    print('offer_reorder groups:')
-    print(groups)
-
+    global groups
+    global tie_break
     global max_tie_break
-    max_tie_break = len(groups)
+    # includes tie-breaking
+
+    if tie_break == 0:
+        grouped_by_score = df_requests_combined_sorted.groupby('score', sort=False)
+        groups = [name for name, dfs in grouped_by_score]
+        max_tie_break = len(groups)
+
+    print('groups:')
+    print(groups)
 
     group = grouped_by_score.get_group(groups[tie_break])
 
@@ -321,8 +326,8 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
     global tie_break
     # includes tie-breaking
-    grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
-    groups = [name for name, dfs in grouped_by_score]
+    # grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
+    # groups = [name for name, dfs in grouped_by_score]
     print('fill_schedule groups:')
     print(groups)
 
