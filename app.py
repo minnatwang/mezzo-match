@@ -12,8 +12,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 tie_break = 0
 max_tie_break = 100
 original_filename = ''
-groups = []
-grouped_by_score = []
+# groups = []
+# grouped_by_score = []
 
 
 def get_requests_from_data(df):
@@ -327,6 +327,7 @@ def offer_reorder(df_schedule, df_requests_combined_sorted, df):
 
 def fill_schedule(df_schedule, df_requests_combined_sorted, df_requests, df, var):
     global tie_break
+    global grouped_by_score
     # includes tie-breaking
     # grouped_by_score = df_requests_combined_sorted.groupby('score', sort=True)
     # groups = [name for name, dfs in grouped_by_score]
